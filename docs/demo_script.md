@@ -1,13 +1,19 @@
 # Demo Script
 
-## Quick Start Demo
+## Quick Start (60 seconds)
+
+```bash
+cd ai-agent-workflow-automation
+make install          # pip install + playwright browser
+make test             # verify with 28 tests
+make cli-demo         # run a live demo
+```
+
+## Manual Demo
 
 ### 1. Start the MiniERP app
 
 ```bash
-cd ai-agent-workflow-automation
-pip install -e ".[dev]"
-playwright install chromium
 python -m workflow_agent.app.main
 ```
 
@@ -75,4 +81,13 @@ curl -X POST http://localhost:8000/tasks/run \
 ```bash
 pytest
 pytest tests/test_e2e_playwright.py
+```
+
+## Docker Demo
+
+```bash
+docker-compose up -d
+curl -X POST http://localhost:8000/tasks/run \
+  -H "Content-Type: application/json" \
+  -d '{"user_input": "Create a new customer named Demo Corp with contact Test, email test@demo.com, and region NA."}'
 ```

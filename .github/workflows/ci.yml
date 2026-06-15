@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+          playwright install chromium
+
+      - name: Lint with ruff
+        run: ruff check src tests
+
+      - name: Type check with mypy
+        run: mypy src
+        if: matrix.python-version == '3.11'
+
+      - name: Run unit tests
+        run: pytest tests/test_parser.py tests/test_planner.py tests/test_executor.py -v
+
+      - name: Run E2E tests
+        run: pytest tests/test_e2e_playwright.py tests/test_tools_customer.py tests/test_tools_order.py -v
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: artifacts/
