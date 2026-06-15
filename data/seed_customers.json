@@ -1,0 +1,23 @@
+[
+  {
+    "customer_id": "CUST-1001",
+    "customer_name": "Alpha Industries",
+    "contact": "Bob Smith",
+    "email": "bob@alpha.com",
+    "region": "NA"
+  },
+  {
+    "customer_id": "CUST-1002",
+    "customer_name": "Beta Solutions",
+    "contact": "Carol Lee",
+    "email": "carol@beta.com",
+    "region": "EMEA"
+  },
+  {
+    "customer_id": "CUST-1003",
+    "customer_name": "Gamma Corp",
+    "contact": "Dave Kim",
+    "email": "dave@gamma.com",
+    "region": "APAC"
+  }
+]

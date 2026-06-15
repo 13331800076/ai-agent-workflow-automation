@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Customers — MiniERP{% endblock %}
+{% block content %}
+<h2>Customer Management</h2>
+
+<div class="card">
+    <h3>Create New Customer</h3>
+    {% if success %}
+    <div class="success" data-testid="success-message">{{ success }}</div>
+    {% endif %}
+    <form method="post" action="/customers">
+        <div class="form-group">
+            <label for="customer_name">Customer Name</label>
+            <input type="text" id="customer_name" name="customer_name" data-testid="customer-name-input" required>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact</label>
+            <input type="text" id="contact" name="contact" data-testid="contact-input" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" data-testid="email-input" required>
+        </div>
+        <div class="form-group">
+            <label for="region">Region</label>
+            <select id="region" name="region" data-testid="region-select" required>
+                <option value="">Select region</option>
+                <option value="NA">North America</option>
+                <option value="EMEA">Europe / Middle East / Africa</option>
+                <option value="APAC">Asia Pacific</option>
+                <option value="LATAM">Latin America</option>
+            </select>
+        </div>
+        <button type="submit" data-testid="create-customer-btn">Create Customer</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3>Customer List</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Region</th>
+            </tr>
+        </thead>
+        <tbody data-testid="customer-list">
+            {% for c in customers %}
+            <tr data-testid="customer-row">
+                <td data-testid="customer-id">{{ c.id }}</td>
+                <td data-testid="customer-name">{{ c.customer_name }}</td>
+                <td data-testid="customer-contact">{{ c.contact }}</td>
+                <td data-testid="customer-email">{{ c.email }}</td>
+                <td data-testid="customer-region">{{ c.region }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center;color:#999;">No customers yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

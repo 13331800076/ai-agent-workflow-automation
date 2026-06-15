@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./downloads:/app/downloads
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - PLAYWRIGHT_HEADLESS=true
+      - ARTIFACTS_DIR=artifacts

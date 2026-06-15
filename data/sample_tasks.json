@@ -1,0 +1,12 @@
+[
+  "Create a new customer named Acme Corp with contact Alice, email alice@acme.com, and region APAC.",
+  "Find order PO-1001 and summarize its status.",
+  "Export the monthly sales report for May 2026.",
+  "Check whether customer Acme Corp has the expected region APAC and contact Alice.",
+  "Fill in the supplier onboarding form with the provided company profile.",
+  "Create a new customer named Global Tech with contact John, email john@globaltech.com, and region EMEA.",
+  "Find order PO-1002 and summarize its status.",
+  "Export the quarterly revenue report for Q2 2026.",
+  "Check whether customer Alpha Industries has the expected region NA and contact Bob Smith.",
+  "Fill in the customer feedback form with the provided survey data."
+]

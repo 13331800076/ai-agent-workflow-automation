@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Reports — MiniERP{% endblock %}
+{% block content %}
+<h2>Report Export</h2>
+
+<div class="card">
+    <h3>Export Report</h3>
+    <form method="post" action="/reports/export">
+        <div class="form-group">
+            <label for="report_type">Report Type</label>
+            <select id="report_type" name="report_type" data-testid="report-type-select" required>
+                <option value="">Select report type</option>
+                <option value="monthly_sales">Monthly Sales</option>
+                <option value="quarterly_revenue">Quarterly Revenue</option>
+                <option value="customer_summary">Customer Summary</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="month">Month</label>
+            <input type="month" id="month" name="month" data-testid="month-input" value="2026-05" required>
+        </div>
+        <button type="submit" data-testid="export-report-btn">Export CSV</button>
+    </form>
+</div>
+{% endblock %}

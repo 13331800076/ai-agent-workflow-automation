@@ -1,0 +1,20 @@
+[
+  {
+    "order_id": "PO-1001",
+    "order_status": "Pending Approval",
+    "amount": 12800,
+    "supplier": "Alpha Industries"
+  },
+  {
+    "order_id": "PO-1002",
+    "order_status": "Shipped",
+    "amount": 5400,
+    "supplier": "Beta Solutions"
+  },
+  {
+    "order_id": "PO-1003",
+    "order_status": "Delivered",
+    "amount": 23100,
+    "supplier": "Gamma Corp"
+  }
+]

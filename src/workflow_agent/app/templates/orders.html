@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Orders — MiniERP{% endblock %}
+{% block content %}
+<h2>Order Management</h2>
+
+<div class="card">
+    <h3>Search Order</h3>
+    <form method="get" action="/orders">
+        <div class="form-group">
+            <label for="order_id">Order ID</label>
+            <input type="text" id="order_id" name="order_id" data-testid="order-id-input" placeholder="e.g. PO-1001" required>
+        </div>
+        <button type="submit" data-testid="search-order-btn">Search</button>
+    </form>
+</div>
+
+{% if searched %}
+<div class="card">
+    <h3>Search Result</h3>
+    {% if order %}
+    <table data-testid="order-result">
+        <tbody>
+            <tr><th>Order ID</th><td data-testid="order-result-id">{{ order.order_id }}</td></tr>
+            <tr><th>Status</th><td data-testid="order-result-status"><span class="status status-{{ order.order_status.lower().replace(' ', '-') }}">{{ order.order_status }}</span></td></tr>
+            <tr><th>Amount</th><td data-testid="order-result-amount">{{ "%.2f"|format(order.amount) }}</td></tr>
+            <tr><th>Supplier</th><td data-testid="order-result-supplier">{{ order.supplier }}</td></tr>
+        </tbody>
+    </table>
+    {% else %}
+    <div class="error" data-testid="order-not-found">Order not found.</div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

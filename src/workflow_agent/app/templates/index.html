@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Home — MiniERP{% endblock %}
+{% block content %}
+<h2>Welcome to MiniERP</h2>
+
+<div class="card">
+    <h3>About</h3>
+    <p>MiniERP is a lightweight demo ERP system used to test AI Agent workflow automation.</p>
+    <p>It provides:</p>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Customer Management</li>
+        <li>Order Lookup</li>
+        <li>Report Export</li>
+        <li>Supplier Onboarding Forms</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h3>API Health</h3>
+    <p>Check the <a href="/health">/health</a> endpoint.</p>
+</div>
+
+<div class="card">
+    <h3>Agent Tasks</h3>
+    <p>Submit tasks via the API at <code>POST /tasks/run</code> or use the CLI.</p>
+</div>
+{% endblock %}

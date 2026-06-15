@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Supplier Onboarding — MiniERP{% endblock %}
+{% block content %}
+<h2>Supplier Onboarding</h2>
+
+<div class="card">
+    <h3>Company Profile</h3>
+    <form method="post" action="/supplier-onboarding">
+        <div class="form-group">
+            <label for="company_name">Company Name</label>
+            <input type="text" id="company_name" name="company_name" data-testid="company-name-input" required>
+        </div>
+        <div class="form-group">
+            <label for="tax_id">Tax ID</label>
+            <input type="text" id="tax_id" name="tax_id" data-testid="tax-id-input" required>
+        </div>
+        <div class="form-group">
+            <label for="region">Region</label>
+            <select id="region" name="region" data-testid="region-select" required>
+                <option value="">Select region</option>
+                <option value="NA">North America</option>
+                <option value="EMEA">Europe / Middle East / Africa</option>
+                <option value="APAC">Asia Pacific</option>
+                <option value="LATAM">Latin America</option>
+            </select>
+        </div>
+        <button type="submit" data-testid="submit-onboarding-btn">Submit</button>
+    </form>
+</div>
+{% endblock %}
