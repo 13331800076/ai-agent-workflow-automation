@@ -1,6 +1,6 @@
 # 🤖 AI Agent Workflow Automation Demo
 
-[![CI](https://github.com/USERNAME/ai-agent-workflow-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/ai-agent-workflow-automation/actions/workflows/ci.yml)
+[![CI](https://github.com/13331800076/ai-agent-workflow-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/13331800076/ai-agent-workflow-automation/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111%2B-009688)](https://fastapi.tiangolo.com/)
 [![Playwright](https://img.shields.io/badge/Playwright-1.44%2B-green)](https://playwright.dev/)
@@ -45,7 +45,7 @@ Artifacts: artifacts/task_a3f7d2e1/
 ### Option A: Local Python
 
 ```bash
-git clone https://github.com/USERNAME/ai-agent-workflow-automation.git
+git clone https://github.com/13331800076/ai-agent-workflow-automation.git
 cd ai-agent-workflow-automation
 make install          # pip install + playwright browser
 make test             # run 28 tests to verify
@@ -238,7 +238,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 If this project helps you, please consider giving it a star! It motivates continued development and signals to the community that this is a useful reference.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=USERNAME/ai-agent-workflow-automation&type=Date)](https://star-history.com/#USERNAME/ai-agent-workflow-automation&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=13331800076/ai-agent-workflow-automation&type=Date)](https://star-history.com/#13331800076/ai-agent-workflow-automation&Date)
 
 ---
 
