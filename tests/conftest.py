@@ -35,7 +35,6 @@ def server():
                 "workflow_agent.app.main:app",
                 "--host", "0.0.0.0",
                 "--port", "8000",
-                "--no-reload"
             ],
             stdout=log_file,
             stderr=subprocess.STDOUT,
