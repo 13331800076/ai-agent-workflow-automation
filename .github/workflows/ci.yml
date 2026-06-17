@@ -35,7 +35,10 @@ jobs:
       - name: Start MiniERP server in background
         run: |
           export PYTHONPATH=$(pwd)/src:$PYTHONPATH
-          python -m workflow_agent.app.main &
+          # Verify import works before starting server
+          python -c "import workflow_agent.app.main; print('✅ Import OK')"
+          # Start server using python -m uvicorn for reliability
+          python -m uvicorn workflow_agent.app.main:app --host 0.0.0.0 --port 8000 --no-reload > server.log 2>&1 &
           # Wait for server to be ready
           for i in {1..30}; do
             if curl -s http://localhost:8000/health > /dev/null; then
@@ -46,6 +49,7 @@ jobs:
             sleep 1
           done
           echo "❌ Server failed to start"
+          cat server.log
           exit 1
 
       - name: Lint with ruff
