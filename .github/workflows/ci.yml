@@ -10,6 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
 
@@ -21,10 +22,35 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install system dependencies for Playwright
         run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2 libpango-1.0-0 libcairo2
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
           pip install -e ".[dev]"
+
+      - name: Install Playwright browsers
+        run: |
           playwright install chromium
+
+      - name: Start MiniERP server in background
+        run: |
+          export PYTHONPATH=$(pwd)/src:$PYTHONPATH
+          python -m workflow_agent.app.main &
+          # Wait for server to be ready
+          for i in {1..30}; do
+            if curl -s http://localhost:8000/health > /dev/null; then
+              echo "✅ Server is ready"
+              exit 0
+            fi
+            echo "Waiting for server... ($i/30)"
+            sleep 1
+          done
+          echo "❌ Server failed to start"
+          exit 1
 
       - name: Lint with ruff
         run: ruff check src tests
@@ -33,15 +59,14 @@ jobs:
         run: mypy src
         if: matrix.python-version == '3.11'
 
-      - name: Run unit tests
-        run: pytest tests/test_parser.py tests/test_planner.py tests/test_executor.py -v
+      - name: Run tests
+        run: pytest tests/ -v
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
 
-      - name: Run E2E tests
-        run: pytest tests/test_e2e_playwright.py tests/test_tools_customer.py tests/test_tools_order.py -v
-
-      - name: Upload test results
+      - name: Upload artifacts on failure
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-results-${{ matrix.python-version }}
+          name: test-artifacts-py${{ matrix.python-version }}
           path: artifacts/
