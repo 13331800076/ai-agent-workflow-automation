@@ -4,6 +4,7 @@ import json
 import sqlite3
 from datetime import UTC
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
@@ -28,13 +29,13 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 
-def get_db():
+def get_db() -> sqlite3.Connection:
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def init_db():
+def init_db() -> None:
     conn = get_db()
     conn.execute(
         """
@@ -77,23 +78,23 @@ def init_db():
 
 
 @app.on_event("startup")
-async def startup():
+async def startup() -> None:
     init_db()
 
 
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
+async def index(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request, "index.html", {})
 
 
 @app.get("/health")
-async def health():
+async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
 # Customer management
 @app.get("/customers", response_class=HTMLResponse)
-async def customers_page(request: Request):
+async def customers_page(request: Request) -> HTMLResponse:
     conn = get_db()
     rows = conn.execute("SELECT * FROM customers ORDER BY id DESC").fetchall()
     conn.close()
@@ -112,7 +113,7 @@ async def create_customer(
     contact: str = Form(...),
     email: str = Form(...),
     region: str = Form(...),
-):
+) -> HTMLResponse:
     conn = get_db()
     conn.execute(
         "INSERT INTO customers (customer_name, contact, email, region) VALUES (?, ?, ?, ?)",
@@ -133,7 +134,7 @@ async def create_customer(
 
 
 @app.get("/api/customers")
-async def api_customers(name: str | None = None):
+async def api_customers(name: str | None = None) -> list[dict[str, Any]]:
     conn = get_db()
     if name:
         rows = conn.execute(
@@ -147,7 +148,7 @@ async def api_customers(name: str | None = None):
 
 # Order management
 @app.get("/orders", response_class=HTMLResponse)
-async def orders_page(request: Request, order_id: str | None = None):
+async def orders_page(request: Request, order_id: str | None = None) -> HTMLResponse:
     conn = get_db()
     order = None
     if order_id:
@@ -165,7 +166,7 @@ async def orders_page(request: Request, order_id: str | None = None):
 
 
 @app.get("/api/orders")
-async def api_orders(order_id: str | None = None):
+async def api_orders(order_id: str | None = None) -> dict[str, Any] | list[dict[str, Any]]:
     conn = get_db()
     if order_id:
         row = conn.execute(
@@ -182,12 +183,12 @@ async def api_orders(order_id: str | None = None):
 
 # Report export
 @app.get("/reports", response_class=HTMLResponse)
-async def reports_page(request: Request):
+async def reports_page(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request, "reports.html", {})
 
 
 @app.post("/reports/export")
-async def export_report(report_type: str = Form(...), month: str = Form(...)):
+async def export_report(report_type: str = Form(...), month: str = Form(...)) -> FileResponse:
     filename = f"{report_type}_{month.replace('-', '_')}.csv"
     output = io.StringIO()
     writer = csv.writer(output)
@@ -216,7 +217,7 @@ async def export_report(report_type: str = Form(...), month: str = Form(...)):
 
 # Supplier onboarding form (for fill_form task)
 @app.get("/supplier-onboarding", response_class=HTMLResponse)
-async def supplier_onboarding_page(request: Request):
+async def supplier_onboarding_page(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request, "supplier_onboarding.html", {})
 
 
@@ -225,7 +226,7 @@ async def submit_supplier_onboarding(
     company_name: str = Form(...),
     tax_id: str = Form(...),
     region: str = Form(...),
-):
+) -> dict[str, str]:
     return {"status": "success", "message": f"Supplier '{company_name}' onboarded."}
 
 
@@ -235,7 +236,7 @@ class RunTaskRequest(BaseModel):
 
 
 @app.post("/tasks/run")
-async def run_task(req: RunTaskRequest):
+async def run_task(req: RunTaskRequest) -> dict[str, Any]:
     import uuid
     from datetime import datetime
 
@@ -266,26 +267,26 @@ async def run_task(req: RunTaskRequest):
 
 
 @app.get("/tasks/{task_id}")
-async def get_task(task_id: str):
+async def get_task(task_id: str) -> JSONResponse:
     artifact_store = ArtifactStore(str(ARTIFACTS_DIR))
     result_path = artifact_store.get_result_path(task_id)
     if not result_path.exists():
         return JSONResponse(status_code=404, content={"error": "Task not found"})
     import json
-    return json.loads(result_path.read_text())
+    return JSONResponse(content=json.loads(result_path.read_text()))
 
 
 @app.get("/tasks/{task_id}/artifacts")
-async def get_task_artifacts(task_id: str):
+async def get_task_artifacts(task_id: str) -> JSONResponse:
     artifact_store = ArtifactStore(str(ARTIFACTS_DIR))
     task_dir = artifact_store.get_task_dir(task_id)
     if not task_dir.exists():
         return JSONResponse(status_code=404, content={"error": "Task not found"})
-    artifacts = []
+    artifacts: list[str] = []
     for f in task_dir.rglob("*"):
         if f.is_file():
             artifacts.append(str(f.relative_to(task_dir)))
-    return {"task_id": task_id, "artifacts": artifacts}
+    return JSONResponse(content={"task_id": task_id, "artifacts": artifacts})
 
 
 if __name__ == "__main__":

@@ -6,9 +6,9 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 
-from workflow_agent.agent.models import TaskRequest
+from workflow_agent.agent.models import ExecutionResult, TaskRequest
 from workflow_agent.agent.parser import TaskParser
-from workflow_agent.agent.planner import WorkflowPlanner
+from workflow_agent.agent.planner import WorkflowPlan, WorkflowPlanner
 from workflow_agent.executor.workflow_executor import WorkflowExecutor
 from workflow_agent.logging.artifact_store import ArtifactStore
 from workflow_agent.logging.audit_logger import AuditLogger
@@ -39,7 +39,7 @@ def print_plan(steps: list) -> None:
     console.print("-" * 50)
 
 
-def print_result(result) -> None:
+def print_result(result: ExecutionResult) -> None:
     if result.status == "success":
         status_color = "bold green"
     elif result.status == "partial":
@@ -128,7 +128,11 @@ def batch(
         audit_logger = AuditLogger(artifact_store)
         executor = WorkflowExecutor(audit_logger)
 
-        async def _execute_one(executor=executor, plan=plan, task_id=task_id):
+        async def _execute_one(
+            executor: WorkflowExecutor = executor,
+            plan: WorkflowPlan = plan,
+            task_id: str = task_id,
+        ) -> ExecutionResult:
             return await executor.execute(plan, task_id)
 
         result = asyncio.run(_execute_one())

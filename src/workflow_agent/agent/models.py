@@ -1,11 +1,11 @@
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
 
-class Intent(str, Enum):
+class Intent(StrEnum):
     CREATE_CUSTOMER = "create_customer"
     SEARCH_ORDER = "search_order"
     EXPORT_REPORT = "export_report"

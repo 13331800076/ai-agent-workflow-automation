@@ -1,9 +1,10 @@
 """API routes for agent task execution."""
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from ..agent.models import TaskRequest
@@ -61,22 +62,22 @@ async def run_task(req: RunTaskRequest) -> dict[str, Any]:
 
 
 @router.get("/{task_id}")
-async def get_task(task_id: str) -> dict[str, Any]:
+async def get_task(task_id: str) -> JSONResponse:
     artifact_store = ArtifactStore(str(ARTIFACTS_DIR))
     result_path = artifact_store.get_result_path(task_id)
     if not result_path.exists():
-        return {"error": "Task not found"}
-    return json.loads(result_path.read_text())
+        return JSONResponse(status_code=404, content={"error": "Task not found"})
+    return JSONResponse(content=cast(dict[str, Any], json.loads(result_path.read_text())))
 
 
 @router.get("/{task_id}/artifacts")
-async def get_task_artifacts(task_id: str) -> dict[str, Any]:
+async def get_task_artifacts(task_id: str) -> JSONResponse:
     artifact_store = ArtifactStore(str(ARTIFACTS_DIR))
     task_dir = artifact_store.get_task_dir(task_id)
     if not task_dir.exists():
-        return {"error": "Task not found"}
-    artifacts = []
+        return JSONResponse(status_code=404, content={"error": "Task not found"})
+    artifacts: list[str] = []
     for f in task_dir.rglob("*"):
         if f.is_file():
             artifacts.append(str(f.relative_to(task_dir)))
-    return {"task_id": task_id, "artifacts": artifacts}
+    return JSONResponse(content={"task_id": task_id, "artifacts": artifacts})

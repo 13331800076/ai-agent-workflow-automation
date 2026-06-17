@@ -2,7 +2,7 @@
 import time
 from typing import Any
 
-from ..agent.models import ExecutionResult, StepResult, WorkflowPlan
+from ..agent.models import ExecutionResult, StepResult, WorkflowPlan, WorkflowStep
 from ..agent.router import ToolRouter
 from ..browser.playwright_client import PlaywrightClient
 from ..browser.screenshots import ScreenshotRecorder
@@ -20,6 +20,7 @@ class WorkflowExecutor:
         browser = PlaywrightClient()
         await browser.start()
         try:
+            assert browser.page is not None, "Browser page not initialized"
             router = ToolRouter(browser)
             recorder = ScreenshotRecorder(self.audit_logger.artifact_store.get_task_dir(task_id))
             step_results: list[StepResult] = []
@@ -43,8 +44,10 @@ class WorkflowExecutor:
                     screenshots.append(before_ss)
 
                     # Execute with retry
+                    async def _execute_step(step: WorkflowStep = step) -> dict[str, Any]:
+                        return await router.execute(step)
                     result = await retry_async(
-                        lambda step=step: router.execute(step),
+                        _execute_step,
                         retries=1,
                         delay=1.0,
                     )
