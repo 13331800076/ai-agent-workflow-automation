@@ -26,6 +26,8 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -e ".[dev]"
+          pip install --upgrade ruff
+          ruff --version
 
       - name: Install Playwright browsers and system deps
         run: |
