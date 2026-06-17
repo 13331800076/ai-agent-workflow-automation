@@ -1,7 +1,8 @@
 """Tests for workflow planner."""
+
 import pytest
-from datetime import datetime
-from workflow_agent.agent.models import TaskRequest, ParsedTask
+
+from workflow_agent.agent.models import ParsedTask
 from workflow_agent.agent.planner import WorkflowPlanner
 
 

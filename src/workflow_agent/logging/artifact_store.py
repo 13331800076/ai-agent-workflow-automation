@@ -1,6 +1,5 @@
 """Artifact store: manages task artifact directories."""
 from pathlib import Path
-from typing import Any
 
 
 class ArtifactStore:

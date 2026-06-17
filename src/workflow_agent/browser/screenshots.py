@@ -1,6 +1,6 @@
 """Screenshot helpers for audit trails."""
 from pathlib import Path
-from typing import Any
+
 from playwright.async_api import Page
 
 

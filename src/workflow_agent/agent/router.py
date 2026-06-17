@@ -1,11 +1,12 @@
 """Tool router: routes workflow steps to the correct tool."""
 from typing import Any
-from .models import WorkflowStep
+
+from ..browser.playwright_client import PlaywrightClient
 from ..tools.customer_tools import CustomerTools
+from ..tools.form_tools import FormTools
 from ..tools.order_tools import OrderTools
 from ..tools.report_tools import ReportTools
-from ..tools.form_tools import FormTools
-from ..browser.playwright_client import PlaywrightClient
+from .models import WorkflowStep
 
 
 class ToolRouter:
@@ -20,12 +21,30 @@ class ToolRouter:
 
     async def execute(self, step: WorkflowStep) -> dict[str, Any]:
         tool_name = step.tool_name
-        if tool_name.startswith("open_customer_page") or tool_name.startswith("fill_customer") or tool_name.startswith("verify_customer"):
+        if (
+            tool_name.startswith("open_customer_page")
+            or tool_name.startswith("fill_customer")
+            or tool_name.startswith("verify_customer")
+        ):
             return await self.customer_tools.execute(step)
-        if tool_name.startswith("open_order") or tool_name.startswith("search_order") or tool_name.startswith("extract_order"):
+        if (
+            tool_name.startswith("open_order")
+            or tool_name.startswith("search_order")
+            or tool_name.startswith("extract_order")
+        ):
             return await self.order_tools.execute(step)
-        if tool_name.startswith("open_report") or tool_name.startswith("select_report") or tool_name.startswith("click_export") or tool_name.startswith("verify_download"):
+        if (
+            tool_name.startswith("open_report")
+            or tool_name.startswith("select_report")
+            or tool_name.startswith("click_export")
+            or tool_name.startswith("verify_download")
+        ):
             return await self.report_tools.execute(step)
-        if tool_name.startswith("open_form") or tool_name.startswith("fill_form") or tool_name.startswith("verify_form") or tool_name.startswith("submit_form"):
+        if (
+            tool_name.startswith("open_form")
+            or tool_name.startswith("fill_form")
+            or tool_name.startswith("verify_form")
+            or tool_name.startswith("submit_form")
+        ):
             return await self.form_tools.execute(step)
         return {"status": "failed", "error": f"Unknown tool: {tool_name}"}

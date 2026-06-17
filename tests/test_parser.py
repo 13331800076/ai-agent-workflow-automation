@@ -1,8 +1,10 @@
 """Tests for task parser and intent classifier."""
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
+
 from workflow_agent.agent.models import TaskRequest
-from workflow_agent.agent.parser import TaskParser, Intent
+from workflow_agent.agent.parser import Intent, TaskParser
 
 
 @pytest.fixture
@@ -13,13 +15,16 @@ def parser():
 @pytest.fixture
 def make_task():
     def _make(text: str) -> TaskRequest:
-        return TaskRequest(task_id="t1", user_input=text, created_at=datetime.now(timezone.utc))
+        return TaskRequest(task_id="t1", user_input=text, created_at=datetime.now(UTC))
     return _make
 
 
 class TestCreateCustomer:
     def test_basic(self, parser, make_task):
-        task = make_task("Create a new customer named Acme Corp with contact Alice, email alice@acme.com, and region APAC.")
+        task = make_task(
+            "Create a new customer named Acme Corp with contact Alice, "
+            "email alice@acme.com, and region APAC."
+        )
         parsed = parser.parse(task)
         assert parsed.intent == Intent.CREATE_CUSTOMER
         assert parsed.entities["customer_name"] == "Acme Corp"

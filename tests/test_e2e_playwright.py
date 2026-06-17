@@ -1,6 +1,6 @@
 """End-to-end Playwright tests for the full web app."""
 import pytest
-from playwright.async_api import Page, async_playwright
+from playwright.async_api import async_playwright
 
 BASE_URL = "http://localhost:8000"
 

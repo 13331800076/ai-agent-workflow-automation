@@ -1,8 +1,9 @@
 """Tests for order tools using Playwright."""
 import pytest
+
+from workflow_agent.agent.models import WorkflowStep
 from workflow_agent.browser.playwright_client import PlaywrightClient
 from workflow_agent.tools.order_tools import OrderTools
-from workflow_agent.agent.models import WorkflowStep
 
 
 @pytest.fixture

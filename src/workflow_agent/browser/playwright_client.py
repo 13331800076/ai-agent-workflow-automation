@@ -2,10 +2,8 @@
 import asyncio
 from pathlib import Path
 from typing import Any
-from playwright.async_api import async_playwright, Page, Browser, Locator
-from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
-from ..agent.models import ToolResult
+from playwright.async_api import Browser, Locator, Page, async_playwright
 
 
 class PlaywrightClient:

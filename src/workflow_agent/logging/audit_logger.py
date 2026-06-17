@@ -1,8 +1,8 @@
 """Audit logger: records structured logs for every task execution."""
 import json
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import UTC, datetime
 from typing import Any
+
 from .artifact_store import ArtifactStore
 
 
@@ -19,7 +19,7 @@ class AuditLogger:
             json.dumps(
                 {
                     "task_id": task_id,
-                    "started_at": datetime.now(timezone.utc).isoformat(),
+                    "started_at": datetime.now(UTC).isoformat(),
                 },
                 indent=2,
             )
@@ -30,7 +30,7 @@ class AuditLogger:
         log_path = self.artifact_store.get_task_dir(task_id) / "execution.log"
         entry = json.dumps(
             {
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "step": step_record,
             },
             indent=2,
@@ -42,7 +42,7 @@ class AuditLogger:
         log_path = self.artifact_store.get_task_dir(task_id) / "execution.log"
         entry = json.dumps(
             {
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "event": "task_end",
                 "status": status,
                 "error": error,

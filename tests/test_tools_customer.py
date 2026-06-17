@@ -1,10 +1,9 @@
 """Tests for customer tools using Playwright."""
 import pytest
-from playwright.async_api import Page
 
+from workflow_agent.agent.models import WorkflowStep
 from workflow_agent.browser.playwright_client import PlaywrightClient
 from workflow_agent.tools.customer_tools import CustomerTools
-from workflow_agent.agent.models import WorkflowStep
 
 
 @pytest.fixture

@@ -1,13 +1,13 @@
 """Workflow executor: runs workflow steps through tools and records results."""
 import time
 from typing import Any
-from ..agent.models import WorkflowPlan, WorkflowStep, StepResult, ExecutionResult
+
+from ..agent.models import ExecutionResult, StepResult, WorkflowPlan
 from ..agent.router import ToolRouter
 from ..browser.playwright_client import PlaywrightClient
 from ..browser.screenshots import ScreenshotRecorder
-from ..logging.audit_logger import AuditLogger
 from ..executor.retry import retry_async
-from ..executor.errors import ToolExecutionError
+from ..logging.audit_logger import AuditLogger
 
 
 class WorkflowExecutor:
@@ -44,7 +44,7 @@ class WorkflowExecutor:
 
                     # Execute with retry
                     result = await retry_async(
-                        lambda: router.execute(step),
+                        lambda step=step: router.execute(step),
                         retries=1,
                         delay=1.0,
                     )

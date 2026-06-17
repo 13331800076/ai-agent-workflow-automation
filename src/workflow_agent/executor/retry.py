@@ -1,6 +1,7 @@
 """Retry wrapper for async tool execution."""
 import asyncio
-from typing import Any, Callable, Awaitable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 
 async def retry_async(

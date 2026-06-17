@@ -1,17 +1,17 @@
 """CLI entry point for running agent tasks with rich output."""
 import asyncio
+from datetime import UTC, datetime
+
 import typer
-from datetime import datetime, timezone
-from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
-from rich.table import Table
+
 from workflow_agent.agent.models import TaskRequest
 from workflow_agent.agent.parser import TaskParser
 from workflow_agent.agent.planner import WorkflowPlanner
 from workflow_agent.executor.workflow_executor import WorkflowExecutor
-from workflow_agent.logging.audit_logger import AuditLogger
 from workflow_agent.logging.artifact_store import ArtifactStore
+from workflow_agent.logging.audit_logger import AuditLogger
 
 app = typer.Typer(help="AI Agent Workflow Automation CLI")
 console = Console()
@@ -71,7 +71,7 @@ def run(
 
     task_id = f"task_{uuid.uuid4().hex[:8]}"
     task_request = TaskRequest(
-        task_id=task_id, user_input=user_input, created_at=datetime.now(timezone.utc)
+        task_id=task_id, user_input=user_input, created_at=datetime.now(UTC)
     )
 
     print_task_header(task_id, user_input)
@@ -92,7 +92,7 @@ def run(
     executor = WorkflowExecutor(audit_logger)
 
     async def _execute() -> None:
-        with console.status("[bold green]Executing workflow...") as status:
+        with console.status("[bold green]Executing workflow..."):
             result = await executor.execute(plan, task_id)
         print_result(result)
 
@@ -108,7 +108,8 @@ def batch(
     import json
     import uuid
 
-    data = json.loads(open(tasks_file).read())
+    with open(tasks_file) as f:
+        data = json.loads(f.read())
     if not isinstance(data, list):
         console.print("[red]Error: file must contain a JSON array of strings[/red]")
         raise typer.Exit(1)
@@ -117,7 +118,7 @@ def batch(
     for user_input in data:
         task_id = f"task_{uuid.uuid4().hex[:8]}"
         task_request = TaskRequest(
-            task_id=task_id, user_input=user_input, created_at=datetime.now(timezone.utc)
+            task_id=task_id, user_input=user_input, created_at=datetime.now(UTC)
         )
         parser = TaskParser()
         parsed = parser.parse(task_request)
@@ -127,7 +128,7 @@ def batch(
         audit_logger = AuditLogger(artifact_store)
         executor = WorkflowExecutor(audit_logger)
 
-        async def _execute_one():
+        async def _execute_one(executor=executor, plan=plan, task_id=task_id):
             return await executor.execute(plan, task_id)
 
         result = asyncio.run(_execute_one())
@@ -143,7 +144,7 @@ def batch(
         console.print(f"{icon} {task_id}: {user_input[:50]}... → {result.status}")
 
     # Save summary
-    summary_path = f"artifacts/batch_summary_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
+    summary_path = f"artifacts/batch_summary_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.json"
     with open(summary_path, "w") as f:
         json.dump(results, f, indent=2)
     console.print(f"[bold green]Batch summary saved to:[/bold green] {summary_path}")
@@ -155,7 +156,6 @@ def status(
 ) -> None:
     """Inspect a previous task's artifacts."""
     import json
-    from pathlib import Path
 
     artifact_store = ArtifactStore("artifacts")
     task_dir = artifact_store.get_task_dir(task_id)

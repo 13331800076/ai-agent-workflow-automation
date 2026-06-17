@@ -1,22 +1,22 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-import sqlite3
-import json
 import csv
 import io
-import os
+import json
+import sqlite3
+from datetime import UTC
 from pathlib import Path
-from typing import Optional
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from ..agent.models import TaskRequest, ParsedTask, WorkflowPlan
+from ..agent.models import TaskRequest
 from ..agent.parser import TaskParser
 from ..agent.planner import WorkflowPlanner
 from ..executor.workflow_executor import WorkflowExecutor
-from ..logging.audit_logger import AuditLogger
 from ..logging.artifact_store import ArtifactStore
+from ..logging.audit_logger import AuditLogger
 
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR.parent.parent.parent / "data"
@@ -133,7 +133,7 @@ async def create_customer(
 
 
 @app.get("/api/customers")
-async def api_customers(name: Optional[str] = None):
+async def api_customers(name: str | None = None):
     conn = get_db()
     if name:
         rows = conn.execute(
@@ -147,7 +147,7 @@ async def api_customers(name: Optional[str] = None):
 
 # Order management
 @app.get("/orders", response_class=HTMLResponse)
-async def orders_page(request: Request, order_id: Optional[str] = None):
+async def orders_page(request: Request, order_id: str | None = None):
     conn = get_db()
     order = None
     if order_id:
@@ -165,7 +165,7 @@ async def orders_page(request: Request, order_id: Optional[str] = None):
 
 
 @app.get("/api/orders")
-async def api_orders(order_id: Optional[str] = None):
+async def api_orders(order_id: str | None = None):
     conn = get_db()
     if order_id:
         row = conn.execute(
@@ -237,10 +237,10 @@ class RunTaskRequest(BaseModel):
 @app.post("/tasks/run")
 async def run_task(req: RunTaskRequest):
     import uuid
-    from datetime import datetime, timezone
+    from datetime import datetime
 
     task_id = f"task_{uuid.uuid4().hex[:8]}"
-    task_request = TaskRequest(task_id=task_id, user_input=req.user_input, created_at=datetime.now(timezone.utc))
+    task_request = TaskRequest(task_id=task_id, user_input=req.user_input, created_at=datetime.now(UTC))
 
     # Parse
     parser = TaskParser()

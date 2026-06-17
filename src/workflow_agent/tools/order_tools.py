@@ -1,6 +1,7 @@
 """Order tools: Playwright automation for order search."""
 from typing import Any
-from ..agent.models import WorkflowStep, ToolResult
+
+from ..agent.models import WorkflowStep
 from ..browser.playwright_client import PlaywrightClient
 from ..browser.selectors import SELECTORS
 

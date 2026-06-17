@@ -1,6 +1,7 @@
 """Form tools: Playwright automation for form filling."""
 from typing import Any
-from ..agent.models import WorkflowStep, ToolResult
+
+from ..agent.models import WorkflowStep
 from ..browser.playwright_client import PlaywrightClient
 from ..browser.selectors import SELECTORS
 

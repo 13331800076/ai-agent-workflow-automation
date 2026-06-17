@@ -1,7 +1,8 @@
 """Task parser and intent classifier."""
 import re
 from typing import Any
-from .models import TaskRequest, ParsedTask, Intent
+
+from .models import Intent, ParsedTask, TaskRequest
 
 
 class TaskParser:
